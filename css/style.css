@@ -1,0 +1,286 @@
+
+/* chemistry_challenge_contest/frontend/css/style.css */
+:root {
+  --easy: #4ade80;
+  --medium: #60a5fa;
+  --hard: #f87171;
+  --expert: #c084fc;
+  --unlimited: #fbbf24;
+  --bg-gradient-start: #1e3a8a;
+  --bg-gradient-end: #0f172a;
+}
+
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  min-height: 100vh;
+  color: white;
+}
+
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: radial-gradient(circle at 20% 50%, rgba(30, 58, 138, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+}
+
+.difficulty-badge {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.question-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  position: relative;
+  padding-bottom: 80px;
+  border-radius: 16px;
+}
+
+.question-actions {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0 20px;
+  z-index: 10;
+}
+
+/* 确保提交按钮始终可见 */
+#submit-btn {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+#submit-btn.hidden {
+  display: none !important;
+}
+
+#submit-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* 确保下一题按钮正常显示/隐藏 */
+#next-question-btn.hidden {
+  display: none !important;
+}
+
+.option {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.option:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.timer-pulse {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); 
+  }
+  70% { 
+    transform: scale(1.05);
+    box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); 
+  }
+  100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); 
+  }
+}
+
+.btn-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(50%);
+}
+
+.btn-easy {
+  background-color: var(--easy);
+}
+
+.btn-medium {
+  background-color: var(--medium);
+}
+
+.btn-hard {
+  background-color: var(--hard);
+}
+
+.btn-expert {
+  background-color: var(--expert);
+}
+
+.btn-unlimited {
+  background-color: var(--unlimited);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.5);
+  color: #7c2d12;
+  font-weight: 600;
+}
+
+.btn-unlimited:hover {
+  box-shadow: 0 6px 15px rgba(251, 191, 36, 0.6);
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+}
+
+.btn-unlimited svg {
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
+}
+
+.difficulty-tag.unlimited {
+  background-color: var(--unlimited);
+  color: #7c2d12;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+}
+
+.infinity-timer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #7c2d12;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+}
+
+.score-display {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, var(--easy), var(--expert));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.correct-answer {
+  background-color: rgba(74, 222, 128, 0.2) !important;
+  border: 2px solid var(--easy);
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.3);
+}
+
+.wrong-answer {
+  background-color: rgba(248, 113, 113, 0.2) !important;
+  border: 2px solid var(--hard);
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3);
+}
+
+.difficulty-tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.difficulty-tag.easy {
+  background-color: var(--easy);
+  color: #1a2e05;
+}
+
+.difficulty-tag.medium {
+  background-color: var(--medium);
+  color: #0c1a2e;
+}
+
+.difficulty-tag.hard {
+  background-color: var(--hard);
+  color: #450a0a;
+}
+
+.difficulty-tag.expert {
+  background-color: var(--expert);
+  color: #3b0764;
+}
+
+.unlimited-checkbox {
+  width: 18px;
+  height: 18px;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 2px solid var(--unlimited);
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.unlimited-checkbox:checked {
+  background-color: var(--unlimited);
+}
+
+.unlimited-checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  color: #7c2d12;
+  font-weight: bold;
+  font-size: 12px;
+  left: 2px;
+  top: -1px;
+}
+
+.unlimited-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--unlimited);
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+
+.unlimited-label:hover .unlimited-checkbox {
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.3);
+}
+
+@media (max-width: 640px) {
+  .question-card {
+    padding: 1.5rem;
+    padding-bottom: 80px;
+  }
+  
+  .option {
+    padding: 1rem;
+  }
+
+  .question-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+}
