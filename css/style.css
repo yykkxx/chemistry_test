@@ -15,8 +15,10 @@ body {
   background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
   min-height: 100vh;
   color: white;
+  overflow-x: hidden;
 }
 
+/* Particle background enhancement */
 .particles {
   position: absolute;
   top: 0;
@@ -24,178 +26,105 @@ body {
   width: 100%;
   height: 100%;
   z-index: -1;
-  background: radial-gradient(circle at 20% 50%, rgba(30, 58, 138, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
 }
 
-.difficulty-badge {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
+/* Card styles with enhanced depth */
 .question-card {
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   transition: all 0.3s ease;
-  position: relative;
-  padding-bottom: 80px;
   border-radius: 16px;
+  overflow: hidden;
 }
 
-.question-actions {
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  padding: 0 20px;
-  z-index: 10;
+.question-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.25), 0 15px 15px -5px rgba(0, 0, 0, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
-/* 确保提交按钮始终可见 */
-#submit-btn {
-  display: inline-flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
+/* Control panel styles */
+.control-panel {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
-#submit-btn.hidden {
-  display: none !important;
+.control-panel:hover {
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-#submit-btn:disabled {
-  opacity: 0.5 !important;
-  cursor: not-allowed !important;
-}
-
-/* 确保下一题按钮正常显示/隐藏 */
-#next-question-btn.hidden {
-  display: none !important;
-}
-
-.option {
+/* Button styles with enhanced effects */
+.difficulty-btn {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
 }
 
-.option:hover {
-  transform: translateY(-4px);
+.difficulty-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.4s ease;
+  z-index: -1;
+}
+
+.difficulty-btn:hover::before {
+  left: 0;
+}
+
+.difficulty-btn:hover {
+  transform: translateY(-2px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
 }
 
+/* Option styles with enhanced hover effects */
+.option {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+}
+
+.option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.option.selected {
+  background-color: rgba(79, 70, 229, 0.6) !important;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+}
+
+/* Timer styles */
 .timer-pulse {
-  animation: pulse 1.5s infinite;
+  animation: pulse 1s infinite;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
 }
 
 @keyframes pulse {
-  0% { 
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); 
-  }
-  70% { 
-    transform: scale(1.05);
-    box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); 
-  }
-  100% { 
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); 
-  }
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
-.btn-disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
-  filter: grayscale(50%);
-}
-
-.btn-easy {
-  background-color: var(--easy);
-}
-
-.btn-medium {
-  background-color: var(--medium);
-}
-
-.btn-hard {
-  background-color: var(--hard);
-}
-
-.btn-expert {
-  background-color: var(--expert);
-}
-
-.btn-unlimited {
-  background-color: var(--unlimited);
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.5);
-  color: #7c2d12;
-  font-weight: 600;
-}
-
-.btn-unlimited:hover {
-  box-shadow: 0 6px 15px rgba(251, 191, 36, 0.6);
-  transform: translateY(-3px);
-  background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
-}
-
-.btn-unlimited svg {
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
-}
-
-.difficulty-tag.unlimited {
-  background-color: var(--unlimited);
-  color: #7c2d12;
-  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
-}
-
-.infinity-timer {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.75rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.5rem;
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  color: #7c2d12;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
-}
-
-.score-display {
-  font-size: 1.5rem;
-  font-weight: bold;
-  background: linear-gradient(90deg, var(--easy), var(--expert));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.fade-in {
-  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.correct-answer {
-  background-color: rgba(74, 222, 128, 0.2) !important;
-  border: 2px solid var(--easy);
-  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.3);
-}
-
-.wrong-answer {
-  background-color: rgba(248, 113, 113, 0.2) !important;
-  border: 2px solid var(--hard);
-  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3);
-}
-
+/* Difficulty badge with enhanced visual */
 .difficulty-tag {
   display: inline-block;
   padding: 0.25rem 0.75rem;
@@ -218,8 +147,7 @@ body {
 }
 
 .difficulty-tag.hard {
-  background-color: var(--hard);
-  color: #450a0a;
+  background-color: var(--hard);450a0a;
 }
 
 .difficulty-tag.expert {
@@ -227,31 +155,81 @@ body {
   color: #3b0764;
 }
 
+/* Enhanced animations */
+.fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Submit and next buttons with shine effect */
+#submit-btn, #next-question-btn {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+#submit-btn::after, #next-question-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: all 0.6s ease;
+  z-index: -1;
+}
+
+#submit-btn:hover::after, #next-question-btn:hover::after {
+  left: 100%;
+}
+
+/* Header title animation */
+.game-title {
+  text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+
+/* Explanation container styling */
+.explanation-container {
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.explanation-container:hover {
+  box-shadow: 0 15px 20px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .control-panel, .question-card {
+    padding: 1rem;
+  }
+  
+  .option {
+    padding: 0.75rem;
+  }
+  
+  .game-title {
+    font-size: 2rem;
+  }
+}
+
+/* Unlimited mode checkbox */
 .unlimited-checkbox {
+  accent-color: var(--unlimited);
   width: 18px;
   height: 18px;
-  appearance: none;
-  -webkit-appearance: none;
-  border: 2px solid var(--unlimited);
-  border-radius: 4px;
-  outline: none;
-  transition: all 0.2s ease;
   cursor: pointer;
-  position: relative;
-}
-
-.unlimited-checkbox:checked {
-  background-color: var(--unlimited);
-}
-
-.unlimited-checkbox:checked::after {
-  content: "✓";
-  position: absolute;
-  color: #7c2d12;
-  font-weight: bold;
-  font-size: 12px;
-  left: 2px;
-  top: -1px;
 }
 
 .unlimited-label {
@@ -261,26 +239,10 @@ body {
   color: var(--unlimited);
   font-weight: 500;
   cursor: pointer;
-  user-select: none;
+  transition: all 0.2s ease;
 }
 
-.unlimited-label:hover .unlimited-checkbox {
-  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.3);
-}
-
-@media (max-width: 640px) {
-  .question-card {
-    padding: 1.5rem;
-    padding-bottom: 80px;
-  }
-  
-  .option {
-    padding: 1rem;
-  }
-
-  .question-actions {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-  }
+.unlimited-label:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
