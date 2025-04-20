@@ -1,34 +1,78 @@
 
 // chemistry_challenge_contest/frontend/js/questions.js
+const questionConfig = {
+  elements: [
+    { symbol: 'H', name: '氢', group: '非金属' },
+    { symbol: 'O', name: '氧', group: '非金属' },
+    { symbol: 'C', name: '碳', group: '非金属' },
+    { symbol: 'Na', name: '钠', group: '碱金属' },
+    { symbol: 'Cl', name: '氯', group: '卤素' }
+  ],
+  maxAttempts: 20,
+  defaultQuestions: {
+    easy: {
+      question: "水的化学式是什么？",
+      options: [
+        { text: "H2O", correct: true },
+        { text: "CO2", correct: false },
+        { text: "NaCl", correct: false },
+        { text: "O2", correct: false }
+      ],
+      explanation: "水由两个氢原子和一个氧原子组成，化学式为H₂O。",
+      uniqueId: "default-water-question"
+    },
+    medium: {
+      question: "下列物质属于纯净物的是：",
+      options: [
+        { text: "生铁", correct: false },
+        { text: "干冰", correct: true },
+        { text: "盐酸", correct: false },
+        { text: "洁净的空气", correct: false }
+      ],
+      explanation: "干冰是固态CO₂，为纯净物；其他选项均为混合物。",
+      uniqueId: "pure-substance-default"
+    },
+    hard: {
+      question: "下列分子中，所有原子共平面的是：",
+      options: [
+        { text: "CH₄", correct: false },
+        { text: "C₂H₄", correct: true },
+        { text: "C₃H₈", correct: false },
+        { text: "CCl₄", correct: false }
+      ],
+      explanation: "乙烯（C₂H₄）为平面结构，所有原子共平面。",
+      uniqueId: "molecular-geometry-default"
+    },
+    expert: {
+      question: "某反应速率方程为 v = k[NO]²[O₂]，当反应容器体积缩小为原来的1/2时，速率变为原来的多少倍？",
+      options: [
+        { text: "2", correct: false },
+        { text: "4", correct: false },
+        { text: "8", correct: true },
+        { text: "16", correct: false }
+      ],
+      explanation: "浓度变为2倍，v' = k(2[NO])²(2[O₂]) = 8k[NO]²[O₂]。",
+      uniqueId: "reaction-kinetics-default"
+    }
+  }
+};
+
 const questionGenerators = {
   easy: [
-    // 元素周期表相关
-    () => {
-      const elements = [
-        { symbol: 'H', name: '氢', group: '非金属' },
-        { symbol: 'O', name: '氧', group: '非金属' },
-        { symbol: 'C', name: '碳', group: '非金属' },
-        { symbol: 'Na', name: '钠', group: '碱金属' },
-        { symbol: 'Cl', name: '氯', group: '卤素' }
-      ];
-      const element = elements[Math.floor(Math.random() * elements.length)];
-      const wrongElements = elements.filter(e => e.symbol !== element.symbol);
-      
-      return {
-        question: `${element.name}的化学符号是什么？`,
-        options: [
-          { text: element.symbol, correct: true },
-          { text: wrongElements[Math.floor(Math.random() * wrongElements.length)].symbol, correct: false },
-          { text: wrongElements[Math.floor(Math.random() * wrongElements.length)].symbol, correct: false },
-          { text: wrongElements[Math.floor(Math.random() * wrongElements.length)].symbol, correct: false }
-        ],
-        explanation: `${element.name}是${element.group}元素，其化学符号为${element.symbol}。`,
-        uniqueId: `element-symbol-${element.symbol}`
-      };
-    }
+    () => createElementSymbolQuestion(questionConfig.elements),
+    () => ({
+      question: "下列属于物理变化的是：",
+      options: [
+        { text: "铁生锈", correct: false },
+        { text: "酒精挥发", correct: true },
+        { text: "食物", correct: false },
+        { text: "木材燃烧", correct: false }
+      ],
+      explanation: "酒精挥发只是状态改变，没有新物质生成，属于物理变化。",
+      uniqueId: "physical-change"
+    })
   ],
   medium: [
-    // 实验室操作
     () => ({
       question: "实验室制取二氧化碳的原料组合正确的是：",
       options: [
@@ -40,117 +84,325 @@ const questionGenerators = {
       explanation: "石灰石（CaCO₃）与稀盐酸反应速率适中，浓盐酸易挥发导致气体不纯，硫酸会生成CaSO₄沉淀阻碍反应。",
       uniqueId: "co2-production"
     }),
-    // 物质分类
+    () => createElementGroupQuestion(questionConfig.elements),
     () => ({
-      question: "下列物质属于纯净物的是：",
+      question: "标准状况下，22.4L氧气的质量是多少克？（O₂摩尔质量32g/mol）",
       options: [
-        { text: "生铁", correct: false },
-        { text: "干冰", correct: true },
-        { text: "盐酸", correct: false },
-        { text: "洁净的空气", correct: false }
+        { text: "32g", correct: true },
+        { text: "16g", correct: false },
+        { text: "64g", correct: false },
+        { text: "22.4g", correct: false }
       ],
-      explanation: "干冰是固态CO₂，为纯净物；其他选项均为混合物。",
-      uniqueId: "pure-substance"
+      explanation: "标准状况下1mol气体体积为22.4L，故质量为1mol×32g/mol=32g",
+      uniqueId: "gas-mass-calculation"
     }),
-    // 酸碱中和
     () => ({
-      question: "某溶液的pH=3，若使其变为中性，应加入：",
+      question: "下列物质属于离子晶体的是：",
       options: [
-        { text: "pH=5的溶液", correct: false },
-        { text: "氢氧化钠溶液", correct: true },
-        { text: "大量水", correct: false },
-        { text: "稀盐酸", correct: false }
+        { text: "金刚石", correct: false },
+        { text: "干冰", correct: false },
+        { text: "氯化钠", correct: true },
+        { text: "铜", correct: false }
       ],
-      explanation: "酸性溶液（pH<7）需加碱性物质（如NaOH）中和至pH=7。",
-      uniqueId: "ph-neutralization"
+      explanation: "NaCl由Na⁺和Cl⁻通过离子键结合形成离子晶体",
+      uniqueId: "crystal-type-identification"
     }),
-    // 化学反应
     () => ({
-      question: "铁在氧气中燃烧的产物是：",
+      question: "实验室收集氢气的最佳方法是：",
       options: [
-        { text: "FeO", correct: false },
-        { text: "Fe₂O₃", correct: false },
-        { text: "Fe₃O₄", correct: true },
-        { text: "Fe(OH)₃", correct: false }
+        { text: "向上排空气法", correct: false },
+        { text: "排水法", correct: true },
+        { text: "向下排空气法", correct: true },
+        { text: "排饱和食盐水法", correct: false }
       ],
-      explanation: "铁在纯氧中剧烈燃烧生成黑色固体Fe₃O₄。",
-      uniqueId: "iron-combustion"
+      explanation: "氢气密度小且难溶于水，可用排水法或向下排空气法收集",
+      uniqueId: "hydrogen-collection-method",
+      multipleCorrect: true
     }),
-    // 金属活动性
     () => ({
-      question: "下列金属活动性最弱的是：",
+      question: "下列变化属于化学变化的是：",
       options: [
-        { text: "铜", correct: false },
-        { text: "银", correct: true },
-        { text: "铁", correct: false },
-        { text: "锌", correct: false }
+        { text: "石油分馏", correct: false },
+        { text: "煤的干馏", correct: true },
+        { text: "碘升华", correct: false },
+        { text: "金属导电", correct: false }
       ],
-      explanation: "金属活动性顺序：Zn>Fe>Cu>Ag，银最不活泼。",
-      uniqueId: "metal-activity"
+      explanation: "煤干馏生成焦炭等新物质，为化学变化；其他均为物理变化",
+      uniqueId: "chemical-change-identification"
     }),
-    // 电解实验
     () => ({
-      question: "电解水实验的结论是：",
+      question: "0.1mol/L NaOH溶液的pH值为：",
       options: [
-        { text: "水由氢气和氧气组成", correct: false },
-        { text: "水由氢、氧元素组成", correct: true },
-        { text: "水分子间有间隙", correct: false },
-        { text: "水是混合物", correct: false }
+        { text: "1", correct: false },
+        { text: "7", correct: false },
+        { text: "13", correct: true },
+        { text: "14", correct: false }
       ],
-      explanation: "电解水生成H₂和O₂，证明水含H、O两种元素。",
-      uniqueId: "water-electrolysis"
+      explanation: "强碱溶液pH=-log(0.1)=13",
+      uniqueId: "strong-base-ph-calculation"
     }),
-    // 气体收集
     () => ({
-      question: "下列气体能用向下排空气法收集的是：",
+      question: "下列试剂需要保存在棕色瓶中的是：",
       options: [
-        { text: "O₂", correct: false },
-        { text: "CO₂", correct: false },
-        { text: "H₂", correct: true },
-        { text: "NH₃", correct: false }
+        { text: "浓硫酸", correct: false },
+        { text: "硝酸银溶液", correct: true },
+        { text: "氢氧化钠溶液", correct: false },
+        { text: "碳酸钠溶液", correct: false }
       ],
-      explanation: "H₂密度小于空气且不与空气反应，可用向下排空气法。",
-      uniqueId: "gas-collection"
+      explanation: "AgNO₃见光易分解，需避光保存",
+      uniqueId: "reagent-storage-method"
     }),
-    // 溶液浓度
     () => ({
-      question: "将浓硫酸敞口放置，其溶质质量分数会：",
+      question: "下列各组物质互为同素异形体的是：",
       options: [
-        { text: "增大", correct: false },
-        { text: "减小", correct: true },
-        { text: "不变", correct: false },
-        { text: "先增大后减小", correct: false }
+        { text: "氧气和臭氧", correct: true },
+        { text: "水和重水", correct: false },
+        { text: "甲烷和乙烷", correct: false },
+        { text: "金刚石和石墨", correct: true }
       ],
-      explanation: "浓硫酸具有吸水性，会吸收空气中水分导致浓度降低。",
-      uniqueId: "sulfuric-acid-concentration"
+      explanation: "O₂与O₃、金刚石与石墨均为同素异形体",
+      uniqueId: "allotrope-identification",
+      multipleCorrect: true
     }),
-    // 元素分析
     () => ({
-      question: "某物质燃烧生成CO₂和H₂O，该物质一定含有的元素是：",
+      question: "下列反应能产生氢气的是：",
       options: [
-        { text: "C、H", correct: true },
-        { text: "C、O", correct: false },
-        { text: "H、O", correct: false },
-        { text: "C、H、O", correct: false }
+        { text: "铁与浓硫酸常温接触", correct: false },
+        { text: "铝与氢氧化钠溶液反应", correct: true },
+        { text: "铜与稀盐酸反应", correct: false },
+        { text: "锌与稀硫酸反应", correct: true }
       ],
-      explanation: "根据质量守恒，生成物含C、H、O，反应物氧气含O，故该物质必含C、H，可能含O。",
-      uniqueId: "elemental-analysis"
+      explanation: "Al与强碱、Zn与稀酸均产H₂",
+      uniqueId: "hydrogen-production-reaction",
+      multipleCorrect: true
     }),
-    // 反应类型
     () => ({
-      question: "下列反应属于置换反应的是：",
+      question: "配制100mL 0.5mol/L CuSO₄溶液需胆矾（CuSO₄·5H₂O）的质量是：（摩尔质量250g/mol）",
       options: [
-        { text: "2H₂O₂ → 2H₂O + O₂↑", correct: false },
-        { text: "Fe + CuSO₄ → FeSO₄ + Cu", correct: true },
-        { text: "CaCO₃ → CaO + CO₂↑", correct: false },
-        { text: "HCl + NaOH → NaCl + H₂O", correct: false }
+        { text: "12.5g", correct: true },
+        { text: "25g", correct: false },
+        { text: "7.5g", correct: false },
+        { text: "16g", correct: false }
       ],
-      explanation: "置换反应形式为单质+化合物→新单质+新化合物，B符合。",
-      uniqueId: "replacement-reaction"
+      explanation: "0.5mol/L×0.1L×250g/mol=12.5g",
+      uniqueId: "hydrate-solution-preparation"
+    }),
+    () => ({
+      question: "下列气体不能用碱石灰干燥的是：",
+      options: [
+        { text: "NH₃", correct: false },
+        { text: "Cl₂", correct: true },
+        { text: "CO₂", correct: true },
+        { text: "H₂", correct: false }
+      ],
+      explanation: "Cl₂（酸性）、CO₂（酸性）会与碱石灰反应",
+      uniqueId: "gas-drying-limitation",
+      multipleCorrect: true
+    }),
+    // 新增20道中级题目
+    () => ({
+      question: "下列物质中，属于弱电解质的是：",
+      options: [
+        { text: "氯化钠", correct: false },
+        { text: "醋酸", correct: true },
+        { text: "氢氧化钠", correct: false },
+        { text: "硫酸", correct: false }
+      ],
+      explanation: "醋酸在水中部分电离，属于弱电解质",
+      uniqueId: "weak-electrolyte-identification"
+    }),
+    () => ({
+      question: "下列离子方程式书写正确的是：",
+      options: [
+        { text: "铁与稀盐酸反应：2Fe + 6H⁺ → 2Fe³⁺ + 3H₂↑", correct: false },
+        { text: "氢氧化钡与硫酸反应：Ba²⁺ + SO₄²⁻ → BaSO₄↓", correct: false },
+        { text: "碳酸钙与盐酸反应：CaCO₃ + 2H⁺ → Ca²⁺ + CO₂↑ + H₂O", correct: true },
+        { text: "铝与氢氧化钠溶液反应：Al + 2OH⁻ → AlO₂⁻ + H₂↑", correct: false }
+      ],
+      explanation: "碳酸钙是难溶物应保留化学式，其他选项电荷或产物不正确",
+      uniqueId: "ionic-equation-validation"
+    }),
+    () => ({
+      question: "下列实验操作正确的是：",
+      options: [
+        { text: "用pH试纸测定浓硫酸的pH值", correct: false },
+        { text: "用碱式滴定管盛放高锰酸钾溶液", correct: false },
+        { text: "用分液漏斗分离乙醇和水的混合物", correct: false },
+        { text: "用湿润的红色石蕊试纸检验氨气", correct: true }
+      ],
+      explanation: "氨气能使湿润红色石蕊试纸变蓝，其他操作均错误",
+      uniqueId: "experimental-operation-correctness"
+    }),
+    () => ({
+      question: "下列各组离子能在pH=1的溶液中大量共存的是：",
+      options: [
+        { text: "K⁺、Cl⁻、SO₄²⁻、Na⁺", correct: true },
+        { text: "HCO₃⁻、K⁺、Cl⁻、Na⁺", correct: false },
+        { text: "Ba²⁺、AlO₂⁻、NO₃⁻、K⁺", correct: false },
+        { text: "Ag⁺、NH₄⁺、NO₃⁻、I⁻", correct: false }
+      ],
+      explanation: "pH=1为强酸性环境，HCO₃⁻、AlO₂⁻不能存在，Ag⁺与I⁻生成沉淀",
+      uniqueId: "ion-coexistence-acidic"
+    }),
+    () => ({
+      question: "下列有关化学键的叙述正确的是：",
+      options: [
+        { text: "离子化合物中一定含有金属元素", correct: false },
+        { text: "共价化合物中可能含有离子键", correct: false },
+        { text: "非极性键只存在于双原子单质分子中", correct: false },
+        { text: "含有共价键的化合物不一定是共价化合物", correct: true }
+      ],
+      explanation: "如NaOH含共价键但属离子化合物，其他选项均有反例",
+      uniqueId: "chemical-bond-description"
+    }),
+    () => ({
+      question: "下列实验现象描述正确的是：",
+      options: [
+        { text: "铜与浓硫酸反应生成无色气体", correct: false },
+        { text: "钠在氧气中燃烧发出黄色火焰，生成白色固体", correct: false },
+        { text: "向FeCl₃溶液中滴加KSCN溶液，溶液变红色", correct: true },
+        { text: "将铜丝插入浓硝酸中，产生无色气体，溶液变蓝", correct: false }
+      ],
+      explanation: "Fe³⁺与SCN⁻生成红色络合物，其他现象描述不准确",
+      uniqueId: "experimental-phenomenon-description"
+    }),
+    () => ({
+      question: "下列有关元素周期表的说法错误的是：",
+      options: [
+        { text: "元素周期表有7个周期，16个族", correct: true },
+        { text: "第ⅠA族元素都是金属元素", correct: false },
+        { text: "过渡元素都是金属元素", correct: false },
+        { text: "主族元素原子的最外层电子数等于族序数", correct: false }
+      ],
+      explanation: "第ⅠA族含氢（非金属），周期表有18纵列7周期",
+      uniqueId: "periodic-table-misconception"
+    }),
+    () => ({
+      question: "下列有关化学反应速率的说法正确的是：",
+      options: [
+        { text: "增大反应物浓度一定能加快反应速率", correct: false },
+        { text: "升高温度一定能加快反应速率", correct: true },
+        { text: "使用催化剂一定能加快反应速率", correct: false },
+        { text: "增大压强一定能加快气体反应速率", correct: false }
+      ],
+      explanation: "温度升高分子运动加快，其他情况需考虑具体反应条件",
+      uniqueId: "reaction-rate-principle"
+    }),
+    () => ({
+      question: "下列有关化学平衡的说法错误的是：",
+      options: [
+        { text: "平衡时正逆反应速率相等", correct: false },
+        { text: "平衡时各组分浓度不再变化", correct: false },
+        { text: "平衡时反应物完全转化为生成物", correct: true },
+        { text: "平衡是动态平衡", correct: false }
+      ],
+      explanation: "平衡时反应物和生成物共存，转化不完全",
+      uniqueId: "chemical-equilibrium-misconception"
+    }),
+    () => ({
+      question: "下列有关原电池的叙述正确的是：",
+      options: [
+        { text: "原电池是将化学能转化为电能的装置", correct: true },
+        { text: "原电池的正极发生氧化反应", correct: false },
+        { text: "电子从负极经电解质溶液流向正极", correct: false },
+        { text: "任何氧化还原反应都能设计成原电池", correct: false }
+      ],
+      explanation: "原电池基本原理是自发氧化还原反应产生电流",
+      uniqueId: "galvanic-cell-principle"
+    }),
+    () => ({
+      question: "下列有关电解的叙述错误的是：",
+      options: [
+        { text: "电解是将电能转化为化学能的过程", correct: false },
+        { text: "电解时阳极发生氧化反应", correct: false },
+        { text: "电解氯化钠溶液可制取金属钠", correct: true },
+        { text: "电解精炼铜时粗铜作阳极", correct: false }
+      ],
+      explanation: "电解NaCl溶液得NaOH、Cl₂和H₂，不能得到Na",
+      uniqueId: "electrolysis-misconception"
+    }),
+    () => ({
+      question: "下列有关有机物的说法正确的是：",
+      options: [
+        { text: "甲烷与氯气在光照下反应属于取代反应", correct: true },
+        { text: "乙烯能使酸性高锰酸钾溶液褪色是因其漂白性", correct: false },
+        { text: "苯分子中含有碳碳双键", correct: false },
+        { text: "乙醇与钠反应比水与钠反应剧烈", correct: false }
+      ],
+      explanation: "甲烷氯代是取代反应，其他选项均有概念错误",
+      uniqueId: "organic-chemistry-principle"
+    }),
+    () => ({
+      question: "下列有关同分异构体的叙述正确的是：",
+      options: [
+        { text: "分子式相同，结构不同的化合物互称同分异构体", correct: true },
+        { text: "相对分子质量相同，结构不同的化合物互称同分异构体", correct: false },
+        { text: "同分异构体的物理性质相同", correct: false },
+        { text: "同分异构体的化学性质相同", correct: false }
+      ],
+      explanation: "同分异构体定义强调分子式相同结构不同",
+      uniqueId: "isomer-definition"
+    }),
+    () => ({
+      question: "下列有关糖类的说法错误的是：",
+      options: [
+        { text: "葡萄糖和果糖互为同分异构体", correct: false },
+        { text: "蔗糖和麦芽糖互为同分异构体", correct: false },
+        { text: "淀粉和纤维素互为同分异构体", correct: true },
+        { text: "糖类不一定都有甜味", correct: false }
+      ],
+      explanation: "淀粉和纤维素分子式不同，不是同分异构体",
+      uniqueId: "carbohydrate-misconception"
+    }),
+    () => ({
+      question: "下列有关蛋白质的说法正确的是：",
+      options: [
+        { text: "蛋白质水解的最终产物是氨基酸", correct: true },
+        { text: "所有蛋白质遇浓硝酸都变黄", correct: false },
+        { text: "蛋白质溶液中加入硫酸铵溶液会产生沉淀", correct: true },
+        { text: "蛋白质的变性是可逆的", correct: false }
+      ],
+      explanation: "蛋白质水解得氨基酸，盐析可逆但变性不可逆",
+      uniqueId: "protein-properties",
+      multipleCorrect: true
+    }),
+    () => ({
+      question: "下列有关高分子材料的说法错误的是：",
+      options: [
+        { text: "聚乙烯是热塑性塑料", correct: false },
+        { text: "酚醛树脂是热固性塑料", correct: false },
+        { text: "天然橡胶的主要成分是聚异戊二烯", correct: false },
+        { text: "合成纤维都是线型高分子", correct: true }
+      ],
+      explanation: "合成纤维也有支链型和网状结构",
+      uniqueId: "polymer-misconception"
+    }),
+    () => ({
+      question: "下列实验能达到预期目的的是：",
+      options: [
+        { text: "用乙醇萃取碘水中的碘", correct: false },
+        { text: "用分液漏斗分离苯和水的混合物", correct: true },
+        { text: "用加热法分离氯化钠和碘的混合物", correct: false },
+        { text: "用过滤法除去食盐水中的泥沙", correct: true }
+      ],
+      explanation: "苯与水不互溶可分液，泥沙不溶可过滤",
+      uniqueId: "experimental-purpose-achievement",
+      multipleCorrect: true
+    }),
+    () => ({
+      question: "下列有关化学与生活的说法正确的是：",
+      options: [
+        { text: "福尔马林是甲醛的水溶液，可用于食品保鲜", correct: false },
+        { text: "小苏打可用于治疗胃酸过多", correct: true },
+        { text: "聚乙烯塑料可用来包装食品", correct: true },
+        { text: "绿色食品是指颜色为绿色的食品", correct: false }
+      ],
+      explanation: "小苏打中和胃酸，聚乙烯无毒可包装食品",
+      uniqueId: "chemistry-life-application",
+      multipleCorrect: true
     })
   ],
   hard: [
-    // 电子排布
     () => ({
       question: "基态铬（Cr）原子的电子排布式正确的是：",
       options: [
@@ -162,117 +414,9 @@ const questionGenerators = {
       explanation: "铬原子为半充满稳定结构，电子优先填入3d轨道，正确排布为[Ar]3d⁵4s¹。",
       uniqueId: "electron-configuration"
     }),
-    // 分子结构
-    () => ({
-      question: "下列分子中，所有原子共平面的是：",
-      options: [
-        { text: "CH₄", correct: false },
-        { text: "C₂H₄", correct: true },
-        { text: "C₃H₈", correct: false },
-        { text: "CCl₄", correct: false }
-      ],
-      explanation: "乙烯（C₂H₄）为平面结构，所有原子共平面。",
-      uniqueId: "molecular-geometry"
-    }),
-    // 化学平衡
-    () => ({
-      question: "某温度下反应2NO₂(g) ⇌ N₂O₄(g) ΔH<0，达到平衡后，升高温度，平衡常数K的变化是：",
-      options: [
-        { text: "增大", correct: false },
-        { text: "减小", correct: true },
-        { text: "不变", correct: false },
-        { text: "先增大后减小", correct: false }
-      ],
-      explanation: "升温使平衡向吸热方向（逆反应）移动，K减小。",
-      uniqueId: "equilibrium-constant"
-    }),
-    // 滴定分析
-    () => ({
-      question: "用0.1mol/L NaOH溶液滴定20mL 0.1mol/L HCl，达到中和点时溶液的pH为：",
-      options: [
-        { text: "1", correct: false },
-        { text: "7", correct: true },
-        { text: "13", correct: false },
-        { text: "9", correct: false }
-      ],
-      explanation: "强酸强碱完全中和生成NaCl，溶液呈中性，pH=7。",
-      uniqueId: "acid-base-titration"
-    }),
-    // 分子间作用力
-    () => ({
-      question: "下列物质中，存在分子间氢键的是：",
-      options: [
-        { text: "CH₃CH₂OH", correct: true },
-        { text: "CH₄", correct: false },
-        { text: "CCl₄", correct: false },
-        { text: "CO₂", correct: false }
-      ],
-      explanation: "乙醇（CH₃CH₂OH）含羟基，可形成分子间氢键。",
-      uniqueId: "hydrogen-bonding"
-    }),
-    // 电化学
-    () => ({
-      question: "电解饱和食盐水时，阳极产物是：",
-      options: [
-        { text: "H₂", correct: false },
-        { text: "Cl₂", correct: true },
-        { text: "O₂", correct: false },
-        { text: "NaOH", correct: false }
-      ],
-      explanation: "阳极发生氧化反应，Cl⁻失去电子生成Cl₂。",
-      uniqueId: "electrolysis"
-    }),
-    // 有机化学
-    () => ({
-      question: "某烷烃的同分异构体数目为3种，其结构是：",
-      options: [
-        { text: "丁烷", correct: false },
-        { text: "2-甲基丙烷", correct: false },
-        { text: "戊烷", correct: true },
-        { text: "2-甲基戊烷", correct: false }
-      ],
-      explanation: "戊烷（C₅H₁₂）有3种异构体：正戊烷、异戊烷、新戊烷。",
-      uniqueId: "isomerism"
-    }),
-    // 反应速率
-    () => ({
-      question: "已知反应：2SO₂(g)+O₂(g)⇌2SO₃(g) ΔH=-196kJ/mol。为提高SO₂转化率，应采取的措施是：",
-      options: [
-        { text: "升高温度", correct: false },
-        { text: "增大压强", correct: true },
-        { text: "使用催化剂", correct: false },
-        { text: "充入He气体", correct: false }
-      ],
-      explanation: "增大压强使平衡向气体体积减小的正反应方向移动。",
-      uniqueId: "reaction-rate"
-    }),
-    // 晶体结构
-    () => ({
-      question: "下列晶体中，熔点最高的是：",
-      options: [
-        { text: "金刚石", correct: true },
-        { text: "NaCl", correct: false },
-        { text: "干冰", correct: false },
-        { text: "金属铜", correct: false }
-      ],
-      explanation: "金刚石为原子晶体，熔点高于离子晶体（NaCl）、金属晶体（Cu）和分子晶体（干冰）。",
-      uniqueId: "crystal-structure"
-    }),
-    // 元素周期律
-    () => ({
-      question: "某元素最高正价与最低负价代数和为4，其位于第几周期？",
-      options: [
-        { text: "二", correct: false },
-        { text: "三", correct: true },
-        { text: "四", correct: false },
-        { text: "五", correct: false }
-      ],
-      explanation: "最高正价+最低负价=4，可能为硫（+6-2=4），硫位于第三周期。",
-      uniqueId: "periodic-trends"
-    })
+    () => createChemicalReactionQuestion()
   ],
   expert: [
-    // 配合物化学
     () => ({
       question: "某配合物的实验式为CoCl₃·5NH₃，1mol该物质与AgNO₃溶液反应生成2mol AgCl沉淀，其正确结构式是：",
       options: [
@@ -284,124 +428,7 @@ const questionGenerators = {
       explanation: "生成2mol Cl⁻，说明外界有2个Cl⁻，内界1个Cl⁻，配位数为6（5NH₃+1Cl⁻）。",
       uniqueId: "coordination-compound"
     }),
-    // 反应动力学
-    () => ({
-      question: "某反应速率方程为 v = k[NO]²[O₂]，当反应容器体积缩小为原来的1/2时，速率变为原来的多少倍？",
-      options: [
-        { text: "2", correct: false },
-        { text: "4", correct: false },
-        { text: "8", correct: true },
-        { text: "16", correct: false }
-      ],
-      explanation: "浓度变为2倍，v' = k(2[NO])²(2[O₂]) = 8k[NO]²[O₂]。",
-      uniqueId: "reaction-kinetics"
-    }),
-    // 电化学
-    () => ({
-      question: "已知 E°(Fe³⁺/Fe²⁺)=0.77V，E°(I₂/I⁻)=0.54V。将Fe³⁺溶液与KI溶液混合，反应方向是：",
-      options: [
-        { text: "自发进行", correct: true },
-        { text: "非自发进行", correct: false },
-        { text: "达平衡", correct: false },
-        { text: "无法判断", correct: false }
-      ],
-      explanation: "E°cell = 0.77 - 0.54 = 0.23 V > 0，反应自发（Fe³⁺氧化I⁻）。",
-      uniqueId: "electrochemistry"
-    }),
-    // 晶体场理论
-    () => ({
-      question: "某晶体场中，八面体配合物 [CoF₆]³⁻ 的CFSE（晶体场稳定化能）为（Δ₀为分裂能）：",
-      options: [
-        { text: "0.4Δ₀", correct: true },
-        { text: "0.6Δ₀", correct: false },
-        { text: "1.2Δ₀", correct: false },
-        { text: "1.6Δ₀", correct: false }
-      ],
-      explanation: "Co³⁺为d⁶弱场（高自旋），CFSE= (-0.4Δ₀ × 4) + (0.6Δ₀ × 2) = 0.4Δ₀。",
-      uniqueId: "crystal-field-theory"
-    }),
-    // 有机分析
-    () => ({
-      question: "某有机物分子式为C₅H₁₀O，能与Fehling试剂反应生成砖红色沉淀，其可能的结构是：",
-      options: [
-        { text: "戊醛", correct: true },
-        { text: "2-戊酮", correct: false },
-        { text: "环戊醇", correct: false },
-        { text: "乙酸丙酯", correct: false }
-      ],
-      explanation: "只有醛（含-CHO）能与Fehling试剂反应生成Cu₂O沉淀。",
-      uniqueId: "organic-analysis"
-    }),
-    // 酸碱滴定
-    () => ({
-      question: "用0.100mol/L NaOH滴定0.100mol/L某弱酸HA（Ka = 1.0 × 10⁻⁵），中和点的pH约为：",
-      options: [
-        { text: "7.0", correct: false },
-        { text: "8.7", correct: true },
-        { text: "9.0", correct: false },
-        { text: "10.5", correct: false }
-      ],
-      explanation: "中和点生成NaA，水解计算：pH = 7 + ½(pKa + log c) ≈ 8.7。",
-      uniqueId: "weak-acid-titration"
-    }),
-    // 核化学
-    () => ({
-      question: "某同位素样品经过20天后衰变剩余1/8，其半衰期为：",
-      options: [
-        { text: "5天", correct: true },
-        { text: "10天", correct: false },
-        { text: "7.5天", correct: false },
-        { text: "6.67天", correct: false }
-      ],
-      explanation: "剩余1/8 = (1/2)³，3个半衰期对应20天 → T½ = 20/4 = 5天。",
-      uniqueId: "nuclear-chemistry"
-    }),
-    // 化学平衡计算
-    () => ({
-      question: "某气相反应 2A(g) ⇌ B(g) 的 Kp = 10 atm⁻¹。当总压为2atm时，A的转化率约为：",
-      options: [
-        { text: "50%", correct: false },
-        { text: "66.7%", correct: true },
-        { text: "75%", correct: false },
-        { text: "80%", correct: false }
-      ],
-      explanation: "设初始A为1mol，转化率α：Kp = (α/(2-α)) / [2(1-α)/(2-α)]² = 10，解得α≈66.7%。",
-      uniqueId: "equilibrium-calculation"
-    }),
-    // 芳香性
-    () => ({
-      question: "下列化合物中，具有芳香性的是：",
-      options: [
-        { text: "环戊二烯负离子", correct: false },
-        { text: "环丙烯正离子", correct: true },
-        { text: "环辛四烯", correct: false },
-        { text: "苯", correct: false }
-      ],
-      explanation: "环丙烯正离子（3个π电子，符合4n+2，n=0）具有芳香性。",
-      uniqueId: "aromaticity"
-    }),
-    // 配合物磁性
-    () => ({
-      question: "某配合物磁矩为 μ = 3.87 B.M.，其中心离子的d电子数为：",
-      options: [
-        { text: "d³", correct: false },
-        { text: "d⁴", correct: true },
-        { text: "d⁵", correct: false },
-        { text: "d⁶", correct: false }
-      ],
-      explanation: "μ = √n(n+2) ≈ 3.87 → n=3，但高自旋d⁴（3未成对电子）也可能符合条件。",
-      uniqueId: "magnetic-properties"
-    })
-  ],
-  unlimited: [
-    // 无时间限制模式使用中等难度题目
-    () => {
-      const mediumQuestion = questionGenerators.medium[Math.floor(Math.random() * questionGenerators.medium.length)]();
-      return {
-        ...mediumQuestion,
-        uniqueId: `unlimited-${mediumQuestion.uniqueId}`
-      };
-    }
+    () => createReactionKineticsQuestion()
   ]
 };
 
@@ -409,29 +436,115 @@ const usedQuestions = {
   easy: new Set(),
   medium: new Set(),
   hard: new Set(),
-  expert: new Set(),
-  unlimited: new Set()
+  expert: new Set()
 };
 
-function generateChemistryQuestion(difficulty) {
-  const generators = questionGenerators[difficulty];
-  let question;
-  let attempts = 0;
-  const maxAttempts = 20;
+function createElementSymbolQuestion(elements) {
+  const element = elements[Math.floor(Math.random() * elements.length)];
+  const wrongElements = elements.filter(e => e.symbol !== element.symbol);
   
-  do {
-    const randomGenerator = generators[Math.floor(Math.random() * generators.length)];
-    question = randomGenerator();
-    attempts++;
-    
-    if (attempts >= maxAttempts) {
-      usedQuestions[difficulty].clear();
-      break;
+  return {
+    question: `${element.name}的化学符号是什么？`,
+    options: [
+      { text: element.symbol, correct: true },
+      { text: wrongElements[0].symbol, correct: false },
+      { text: wrongElements[1].symbol, correct: false },
+      { text: wrongElements[2].symbol, correct: false }
+    ],
+    explanation: `${element.name}是${element.group}元素，其化学符号为${element.symbol}。`,
+    uniqueId: `element-symbol-${element.symbol}`
+  };
+}
+
+function createElementGroupQuestion(elements) {
+  const element = elements[Math.floor(Math.random() * elements.length)];
+  const wrongGroups = ['碱金属', '卤素', '过渡金属', '惰性气体'];
+  const filteredGroups = wrongGroups.filter(g => g !== element.group);
+  
+  return {
+    question: `${element.name}属于哪一类元素？`,
+    options: [
+      { text: element.group, correct: true },
+      { text: filteredGroups[0], correct: false },
+      { text: filteredGroups[1], correct: false },
+      { text: filteredGroups[2], correct: false }
+    ],
+    explanation: `${element.name}（${element.symbol}）属于${element.group}元素。`,
+    uniqueId: `element-group-${element.symbol}`
+  };
+}
+
+function createChemicalReactionQuestion() {
+  const reactions = [
+    {
+      question: "下列反应中，属于置换反应的是：",
+      options: [
+        { text: "2H₂ + O₂ → 2H₂O", correct: false },
+        { text: "Zn + 2HCl → ZnCl₂ + H₂↑", correct: true },
+        { text: "CaCO₃ → CaO + CO₂↑", correct: false },
+        { text: "NaOH + HCl → NaCl + H₂O", correct: false }
+      ],
+      explanation: "置换反应是一种单质与一种化合物反应生成另一种单质和另一种化合物。",
+      uniqueId: "replacement-reaction"
     }
-  } while (usedQuestions[difficulty].has(question.uniqueId));
-  
-  usedQuestions[difficulty].add(question.uniqueId);
-  return question;
+  ];
+  return reactions[Math.floor(Math.random() * reactions.length)];
+}
+
+function createReactionKineticsQuestion() {
+  const questions = [
+    {
+      question: "某反应速率方程为 v = k[A]²[B]，当[A]变为原来的3倍，[B]减半时，反应速率变为原来的多少倍？",
+      options: [
+        { text: "1.5", correct: false },
+        { text: "2.25", correct: false },
+        { text: "4.5", correct: true },
+        { text: "9", correct: false }
+      ],
+      explanation: "v' = k(3[A])²(0.5[B]) = 4.5k[A]²[B] = 4.5v。",
+      uniqueId: "kinetics-calculation"
+    }
+  ];
+  return questions[Math.floor(Math.random() * questions.length)];
+}
+
+function generateChemistryQuestion(difficulty) {
+  try {
+    if (!questionGenerators[difficulty] || questionGenerators[difficulty].length === 0) {
+      console.error(`No question generators found for difficulty: ${difficulty}`);
+      return getDefaultQuestion(difficulty);
+    }
+
+    const generators = questionGenerators[difficulty];
+    let question;
+    let attempts = 0;
+    
+    do {
+      const randomGenerator = generators[Math.floor(Math.random() * generators.length)];
+      question = randomGenerator();
+      attempts++;
+      
+      if (attempts >= questionConfig.maxAttempts) {
+        usedQuestions[difficulty].clear();
+        break;
+      }
+    } while (!question || usedQuestions[difficulty].has(question.uniqueId));
+    
+    if (!question) {
+      console.error('Failed to generate question after max attempts');
+      return getDefaultQuestion(difficulty);
+    }
+    
+    usedQuestions[difficulty].add(question.uniqueId);
+    return question;
+  } catch (error) {
+    console.error('Error generating question:', error);
+    return getDefaultQuestion(difficulty);
+  }
+}
+
+function getDefaultQuestion(difficulty) {
+  return questionConfig.defaultQuestions[difficulty] || questionConfig.defaultQuestions.easy;
 }
 
 function resetUsedQuestions(difficulty) {
