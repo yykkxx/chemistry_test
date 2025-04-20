@@ -8,122 +8,257 @@
   <title>化学挑战赛</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
   <link href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
   <style>
-    /* 确保提交按钮始终可见 */
+    :root {
+      --easy: #4ade80;
+      --medium: #60a5fa;
+      --hard: #f87171;
+      --expert: #c084fc;
+      --unlimited: #fbbf24;
+    }
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .difficulty-badge {
+      transition: all 0.3s ease;
+    }
+    .question-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s ease;
+    }
+    .control-panel {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+    }
+    .option {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .option:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .timer-pulse {
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .btn-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .question-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      justify-content: center;
+    }
+    .difficulty-btn {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .difficulty-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: all 0.4s ease;
+      z-index: -1;
+    }
+    .difficulty-btn:hover::before {
+      left: 0;
+    }
+    .difficulty-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    }
+    .unlimited-checkbox {
+      accent-color: var(--unlimited);
+      width: 18px;
+      height: 18px;
+    }
+    .unlimited-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--unlimited);
+      font-weight: 500;
+    }
+    #submit-btn, #next-question-btn {
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    #submit-btn::after, #next-question-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.6s ease;
+      z-index: -1;
+    }
+    #submit-btn:hover::after, #next-question-btn:hover::after {
+      left: 100%;
+    }
     #submit-btn {
       display: inline-flex !important;
       visibility: visible !important;
       opacity: 1 !important;
-      pointer-events: auto !important;
     }
     #submit-btn.hidden {
       display: none !important;
     }
-    #submit-btn:disabled {
-      opacity: 0.5 !important;
-      cursor: not-allowed !important;
+    .option.selected {
+      background-color: rgba(79, 70, 229, 0.6) !important;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+    }
+    .fade-in {
+      animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .game-title {
+      text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+    }
+    .explanation-container {
+      background: rgba(17, 24, 39, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
   </style>
 </head>
 <body class="text-white">
-  <canvas id="particles" class="particles"></canvas>
+  <canvas id="particles" class="particles" aria-hidden="true"></canvas>
   
   <div class="container mx-auto px-4 py-8">
-    <header class="text-center mb-8">
-      <h1 class="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+    <header class="text-center mb-12 animate__animated animate__fadeIn">
+      <h1 class="text-5xl font-bold mb-3 game-title bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600">
         化学挑战赛
       </h1>
-      <p class="text-gray-300">测试你的化学知识，挑战不同难度题目</p>
+      <p class="text-gray-300 text-lg">探索元素世界，挑战极限知识</p>
     </header>
 
-    <div class="flex flex-col lg:flex-row gap-6">
+    <div class="flex flex-col lg:flex-row gap-8">
       <!-- 左侧控制面板 -->
-      <div class="w-full lg:w-1/4 space-y-6">
-        <div class="bg-gray-800 rounded-xl p-6 shadow-lg">
-          <h2 class="text-xl font-semibold mb-4">游戏控制</h2>
+      <div class="w-full lg:w-1/4">
+        <div class="control-panel p-6 shadow-lg">
+          <h2 class="text-xl font-semibold mb-6 flex items-center">
+            <span class="mr-2">⚙️</span> 游戏控制
+          </h2>
           
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-2">选择难度</label>
-            <div class="grid grid-cols-2 gap-2">
-              <button id="easy-btn" class="difficulty-btn bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-3" id="difficulty-label">选择难度</label>
+            <div class="grid grid-cols-2 gap-3" aria-labelledby="difficulty-label">
+              <button id="easy-btn" class="difficulty-btn bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg" aria-label="初级难度">
                 初级
               </button>
-              <button id="medium-btn" class="difficulty-btn bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
+              <button id="medium-btn" class="difficulty-btn bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg" aria-label="中级难度">
                 中级
               </button>
-              <button id="hard-btn" class="difficulty-btn bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg">
+              <button id="hard-btn" class="difficulty-btn bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-lg" aria-label="高级难度">
                 高级
               </button>
-              <button id="expert-btn" class="difficulty-btn bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg">
+              <button id="expert-btn" class="difficulty-btn bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-lg" aria-label="专家难度">
                 专家
               </button>
             </div>
-            <div class="mt-3">
-              <label class="unlimited-label">
-                <input type="checkbox" id="unlimited-checkbox" class="unlimited-checkbox">
-                <span>无限时间模式</span>
+            <div class="mt-4">
+              <label class="unlimited-label" id="unlimited-label">
+                <input type="checkbox" id="unlimited-checkbox" class="unlimited-checkbox" aria-labelledby="unlimited-label">
+                <span>✨ 无限时间模式</span>
               </label>
             </div>
           </div>
 
-          <div class="mb-4">
+          <div class="mb-6">
             <div class="flex justify-between items-center mb-2">
               <span class="text-sm font-medium">剩余时间</span>
-              <span id="timer" class="font-mono text-xl bg-gray-700 px-3 py-1 rounded-lg timer-pulse">60</span>
+              <span id="timer" class="font-mono text-xl bg-gray-800 px-4 py-1.5 rounded-lg timer-pulse shadow-lg" aria-live="polite">60</span>
             </div>
-            <div id="timer-container" class="w-full bg-gray-700 rounded-full h-2.5">
-              <div id="timer-bar" class="bg-red-500 h-2.5 rounded-full transition-all duration-300" style="width: 100%"></div>
+            <div id="timer-container" class="w-full bg-gray-700 rounded-full h-2.5 mt-2">
+              <div id="timer-bar" class="bg-red-500 h-2.5 rounded-full transition-all duration-300" style="width: 100%" aria-hidden="true"></div>
             </div>
           </div>
 
-          <div class="mb-4">
+          <div class="mb-6 bg-gray-800 bg-opacity-50 rounded-lg p-4">
             <div class="flex justify-between items-center">
               <span class="text-sm font-medium">当前积分</span>
-              <span id="score" class="font-mono text-xl">0</span>
+              <span id="score" class="font-mono text-xl" aria-live="polite">0</span>
             </div>
           </div>
 
-          <div class="mb-4">
+          <div class="mb-4 bg-gray-800 bg-opacity-50 rounded-lg p-4">
             <div class="flex justify-between items-center">
               <span class="text-sm font-medium">最高记录</span>
-              <span id="high-score" class="font-mono text-xl">0</span>
+              <span id="high-score" class="font-mono text-xl" aria-live="polite">0</span>
             </div>
-          </div>
-        </div>
-
-        <div class="bg-gray-800 rounded-xl p-6 shadow-lg">
-          <h2 class="text-xl font-semibold mb-4">排行榜</h2>
-          <div class="text-center py-8 text-gray-500">
-            正在开发中
           </div>
         </div>
       </div>
 
       <!-- 右侧题目区域 -->
       <div class="w-full lg:w-3/4">
-        <div id="question-container" class="question-card rounded-xl p-6 shadow-lg min-h-64 flex flex-col items-center justify-center relative">
-          <div class="text-center text-gray-400">
-            <p class="text-2xl">👨‍🔬</p>
-            <p>请选择难度开始挑战</p>
-          </div>
-          <div id="question-actions" class="question-actions">
-            <button id="submit-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition">
-              提交答案
-            </button>
-            <button id="next-question-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition hidden">
-              下一题
-            </button>
+        <div id="question-container" class="question-card rounded-xl p-8 shadow-lg min-h-64" aria-live="polite">
+          <div class="text-center text-gray-400 py-12">
+            <p class="text-5xl mb-4">👨‍🔬</p>
+            <p class="text-xl">请选择难度开始挑战</p>
+            <p class="text-sm mt-3 text-gray-500">选择难度后立即开始测试你的化学知识</p>
           </div>
         </div>
 
-        <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6" role="group" aria-labelledby="question-container">
           <!-- 选项将通过JS动态生成 -->
         </div>
 
-        <div id="explanation-container" class="mt-6 bg-gray-800 rounded-xl p-6 hidden">
-          <h3 class="text-lg font-semibold mb-2">答案解析</h3>
+        <div id="explanation-container" class="mt-6 explanation-container rounded-xl p-6 hidden" aria-live="polite">
+          <h3 class="text-lg font-semibold mb-2 flex items-center">
+            <span class="mr-2">💡</span> 答案解析
+          </h3>
           <p id="explanation-text" class="text-gray-300"></p>
+        </div>
+
+        <div id="question-actions" class="question-actions">
+          <button id="submit-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition shadow-lg" disabled aria-label="提交答案">
+            提交答案
+          </button>
+          <button id="next-question-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition shadow-lg hidden" aria-label="下一题">
+            下一题
+          </button>
         </div>
       </div>
     </div>
@@ -141,16 +276,17 @@
       canvas.height = window.innerHeight;
       
       const particles = [];
-      const particleCount = Math.floor(window.innerWidth / 10);
+      const particleCount = Math.floor(window.innerWidth / 8);
       
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 2 + 1,
+          size: Math.random() * 2 + 0.5,
           speedX: Math.random() * 0.5 - 0.25,
           speedY: Math.random() * 0.5 - 0.25,
-          color: `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.1})`
+          color: `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.1})`,
+          glowing: Math.random() > 0.8
         });
       }
       
@@ -158,6 +294,14 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         particles.forEach(particle => {
+          if (particle.glowing) {
+            // 发光粒子
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(99, 102, 241, 0.8)';
+          } else {
+            ctx.shadowBlur = 0;
+          }
+          
           ctx.fillStyle = particle.color;
           ctx.beginPath();
           ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
@@ -166,8 +310,16 @@
           particle.x += particle.speedX;
           particle.y += particle.speedY;
           
-          if (particle.x < 0 || particle.x > canvas.width) particle.speedX *= -1;
-          if (particle.y < 0 || particle.y > canvas.height) particle.speedY *= -1;
+          // 粒子达到边界时，创造无缝循环效果
+          if (particle.x < 0) particle.x = canvas.width;
+          if (particle.x > canvas.width) particle.x = 0;
+          if (particle.y < 0) particle.y = canvas.height;
+          if (particle.y > canvas.height) particle.y = 0;
+          
+          // 随机变化大小，创造呼吸效果
+          if (Math.random() > 0.99) {
+            particle.size = Math.random() * 2 + 0.5;
+          }
         });
         
         requestAnimationFrame(animate);
@@ -182,6 +334,21 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      // 确保DOM完全加载
+      if (document.readyState === 'complete') {
+        initGame();
+        initParticles();
+      } else {
+        document.addEventListener('readystatechange', () => {
+          if (document.readyState === 'complete') {
+            initGame();
+            initParticles();
+          }
+        });
+      }
+    });
+
+    function initGame() {
       // 初始化游戏实例
       window.game = new ChemistryGame();
       
@@ -208,10 +375,7 @@
       
       // 绑定下一题按钮
       document.getElementById('next-question-btn').addEventListener('click', () => window.game.nextQuestion());
-      
-      // 初始化粒子效果
-      initParticles();
-    });
+    }
   </script>
 </body>
 </html>
